@@ -12,7 +12,10 @@ export const getCategories = async (config) => {
       appUid:config.appUid,
       modelUid: CATEGORY_MODEL_NAME,
       query: {
-        depth: 1
+        depth: 1,
+        order: [
+          'sortOrder'
+        ]
       }
     })
     return {

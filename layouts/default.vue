@@ -1,6 +1,6 @@
 <template>
   <div class="Wrapper">
-    <Header title="Blog" icon="✏️" />
+    <Header title="Help center" icon="💡" />
     <Nuxt />
     <Badge />
   </div>

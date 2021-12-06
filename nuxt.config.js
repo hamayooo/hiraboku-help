@@ -5,7 +5,7 @@ export default {
     projectUid: 'プロジェクトUID',
     appUid: 'AppUID',
     token: 'CDN APIトークン',
-    pageLimit: 12,
+    pageLimit: 20,
   },
 
   // Target: https://go.nuxtjs.dev/config-target
@@ -13,7 +13,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'Blog',
+    title: 'Help center',
     htmlAttrs: {
       lang: 'en'
     },
