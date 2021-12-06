@@ -134,6 +134,11 @@ export default {
   margin: 32px auto;
   display: block;
 }
+.Related {
+  border-top: 1px solid #e5e5e5;
+  margin: 36px 0 0 0;
+  padding: 28px 0 0 0;
+}
 .Related_Heading {
   margin: 0 0 16px 0;
   padding: 0;
@@ -144,9 +149,8 @@ export default {
   padding: 0;
 }
 .Related_Item {
-  margin: 0 0 8px 0;
+  margin: 0 0 8px 28px;
   padding: 0;
-  list-style: none;
 }
 
 
@@ -157,6 +161,10 @@ export default {
   }
   .Article_Header {
     margin: 0 0 48px 0;  
+  }
+  .Related {
+    margin: 56px 0 0 0;
+    padding: 44px 0 0 0;
   }
 }
 </style>
