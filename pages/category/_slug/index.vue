@@ -44,7 +44,6 @@ export default {
     const category = categories.find(
       (_category) => _category.slug === params.slug
     )
-    console.log(category)
     const { articles, total } = await getArticles($config, {
       category: (category && category._id) || '',
     })
