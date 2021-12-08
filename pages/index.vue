@@ -1,46 +1,62 @@
 <template>
-  <main class="Container">
-    <Cover img="https://as1.ftcdn.net/v2/jpg/03/45/18/76/1000_F_345187680_Eo4rKPDmdB6QTaGXFwU4NE5BaLlpGooL.jpg" />
-    <div class="Inner">
-      <div class="Categories">
-        <div v-for="category in categories" :key="category._id" class="Category">
-          <NuxtLink :to="`/category/${category.slug}`" class="Category_Link">
-            <em>{{category.emoji}}</em>
-            <div class="Category_Text">
-              <h2>{{category.name}}</h2>
-              <p>{{category.description}}</p>
-            </div>
-          </NuxtLink>
+  <Wrapper :app="app">
+    <main class="Container">
+      <Cover
+        v-if="app && app.cover && app.cover.value"
+        :img="app.cover.value"
+      />
+      <div class="Inner">
+        <div class="Categories">
+          <div
+            v-for="category in categories"
+            :key="category._id"
+            class="Category"
+          >
+            <NuxtLink :to="`/category/${category.slug}`" class="Category_Link">
+              <em>{{ category.emoji.value }}</em>
+              <div class="Category_Text">
+                <h2>{{ category.name }}</h2>
+                <p>{{ category.description }}</p>
+              </div>
+            </NuxtLink>
+          </div>
+        </div>
+        <div class="Articles">
+          <h2 class="Articles_Heading">Recent articles</h2>
+          <div class="Articles_Inner">
+            <ArticleCard
+              v-for="article in articles"
+              :key="article._id"
+              :article="article"
+            />
+          </div>
         </div>
       </div>
-      <div class="Articles">
-        <h2 class="Articles_Heading">Recent articles</h2>
-        <div class="Articles_Inner">
-          <ArticleCard v-for="article in articles" :key="article._id" :article="article" />
-        </div>
-      </div>
-    </div>
-  </main>
+    </main>
+  </Wrapper>
 </template>
 
 <script>
 import { getArticles } from 'api/article'
 import { getCategories } from 'api/category'
+import { getApp } from 'api/app'
 
 export default {
   async asyncData(context) {
-    const [resArticles, resCategories] = await Promise.all([
+    const [resArticles, resCategories, app] = await Promise.all([
       getArticles(context.$config, {
         query: {
-          limit: 6
-        }
+          limit: 6,
+        },
       }),
       getCategories(context.$config),
+      getApp(context.$config),
     ])
     return {
       articles: resArticles.articles,
       total: resArticles.total,
       categories: resCategories.categories,
+      app,
     }
   },
   data() {
@@ -61,10 +77,10 @@ export default {
   padding: 20px 24px 20px 20px;
   min-width: 0;
   position: relative;
-  transition: background .2s;
+  transition: background 0.2s;
 }
 .Category_Link::after {
-  content: "";
+  content: '';
   width: calc(100% - 78px);
   height: 1px;
   background: #e5e5e5;
