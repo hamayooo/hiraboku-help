@@ -33,9 +33,9 @@
 import { getArticles } from 'api/article'
 import { getApp } from 'api/app'
 import { toPlainText } from 'utils/markdown'
+import { getSiteName } from 'utils/head'
 
 export default {
-  layout: 'sub',
   async asyncData({ $config }) {
     const app = await getApp($config)
     return {
@@ -47,6 +47,11 @@ export default {
       articles: [],
       total: 0,
       isLoading: true,
+    }
+  },
+  head() {
+    return {
+      title: getSiteName(this.app),
     }
   },
   async created() {

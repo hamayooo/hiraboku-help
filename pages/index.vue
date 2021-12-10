@@ -40,6 +40,7 @@
 import { getArticles } from 'api/article'
 import { getCategories } from 'api/category'
 import { getApp } from 'api/app'
+import { getSiteName } from 'utils/head'
 
 export default {
   async asyncData(context) {
@@ -59,8 +60,10 @@ export default {
       app,
     }
   },
-  data() {
-    return {}
+  head() {
+    return {
+      title: getSiteName(this.app),
+    }
   },
 }
 </script>
