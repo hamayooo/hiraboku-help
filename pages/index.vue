@@ -1,69 +1,54 @@
 <template>
-  <Wrapper :app="app">
-    <main class="Container">
-      <Cover
-        v-if="app && app.cover && app.cover.value"
-        :img="app.cover.value"
-      />
-      <div class="Inner">
-        <div class="Categories">
-          <div
-            v-for="category in categories"
-            :key="category._id"
-            class="Category"
-          >
-            <NuxtLink :to="`/category/${category.slug}`" class="Category_Link">
-              <em>{{ category.emoji.value }}</em>
-              <div class="Category_Text">
-                <h2>{{ category.name }}</h2>
-                <p>{{ category.description }}</p>
-              </div>
-            </NuxtLink>
-          </div>
-        </div>
-        <div class="Articles">
-          <h2 class="Articles_Heading">Recent articles</h2>
-          <div class="Articles_Inner">
-            <ArticleCard
-              v-for="article in articles"
-              :key="article._id"
-              :article="article"
-            />
-          </div>
+  <main class="Container">
+    <Cover v-if="app && app.cover && app.cover.value" :img="app.cover.value" />
+    <div class="Inner">
+      <div class="Categories">
+        <div
+          v-for="category in categories"
+          :key="category._id"
+          class="Category"
+        >
+          <NuxtLink :to="`/category/${category.slug}`" class="Category_Link">
+            <em>{{ category.emoji.value }}</em>
+            <div class="Category_Text">
+              <h2>{{ category.name }}</h2>
+              <p>{{ category.description }}</p>
+            </div>
+          </NuxtLink>
         </div>
       </div>
-    </main>
-  </Wrapper>
+      <div class="Articles">
+        <h2 class="Articles_Heading">Recent articles</h2>
+        <div class="Articles_Inner">
+          <ArticleCard
+            v-for="article in articles"
+            :key="article._id"
+            :article="article"
+          />
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script>
-import { getArticles } from 'api/article'
-import { getCategories } from 'api/category'
-import { getApp } from 'api/app'
+import { mapGetters } from 'vuex'
 import { getSiteName } from 'utils/head'
 
 export default {
-  async asyncData(context) {
-    const [resArticles, resCategories, app] = await Promise.all([
-      getArticles(context.$config, {
-        query: {
-          limit: 6,
-        },
-      }),
-      getCategories(context.$config),
-      getApp(context.$config),
-    ])
-    return {
-      articles: resArticles.articles,
-      total: resArticles.total,
-      categories: resCategories.categories,
-      app,
-    }
+  async asyncData({ $config, store }) {
+    await store.dispatch('fetchApp', $config)
+    await store.dispatch('fetchArticles', $config)
+    await store.dispatch('fetchCategories', $config)
+    return {}
   },
   head() {
     return {
       title: getSiteName(this.app),
     }
+  },
+  computed: {
+    ...mapGetters(['app', 'articles', 'categories']),
   },
 }
 </script>

@@ -1,71 +1,64 @@
 <template>
-  <Wrapper :app="app">
-    <main class="Container">
-      <div class="Inner">
-        <div class="Category_Header">
-          <em v-if="category.emoji && category.emoji.value">{{
-            category.emoji.value
-          }}</em>
-          <div class="Category_Text">
-            <h2>{{ category.name }}</h2>
-            <p>{{ category.description }}</p>
-          </div>
-        </div>
-        <div class="Articles">
-          <article
-            v-for="article in articles"
-            :key="article._id"
-            class="Article"
-          >
-            <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
-              <h3 class="Article_Title">{{ article.title }}</h3>
-              <p class="Article_Description">{{ article.description }}</p>
-            </NuxtLink>
-          </article>
-          <Pagination
-            :total="total"
-            :current="currentPage"
-            :base-path="`/category/${category.slug}`"
-          />
+  <main class="Container">
+    <div class="Inner">
+      <div class="Category_Header">
+        <em v-if="category.emoji && category.emoji.value">{{
+          category.emoji.value
+        }}</em>
+        <div class="Category_Text">
+          <h2>{{ category.name }}</h2>
+          <p>{{ category.description }}</p>
         </div>
       </div>
-    </main>
-  </Wrapper>
+      <div class="Articles">
+        <article v-for="article in articles" :key="article._id" class="Article">
+          <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
+            <h3 class="Article_Title">{{ article.title }}</h3>
+            <p class="Article_Description">{{ article.description }}</p>
+          </NuxtLink>
+        </article>
+        <Pagination
+          :total="total"
+          :current="pageNumber"
+          :base-path="`/category/${category.slug}`"
+        />
+      </div>
+    </div>
+  </main>
 </template>
 
 <script>
-import { getArticles } from 'api/article'
-import { getCategories } from 'api/category'
-import { getApp } from 'api/app'
+import { mapGetters } from 'vuex'
 import { getSiteName } from 'utils/head'
 
 export default {
-  async asyncData({ $config, redirect, params }) {
-    const currentPage = Number(params.page)
-    if (Number.isNaN(currentPage)) return redirect(302, '/')
-    const { categories } = await getCategories($config)
-    const category = categories.find(
+  async asyncData({ $config, store, redirect, params }) {
+    await store.dispatch('fetchApp', $config)
+    await store.dispatch('fetchCategories', $config)
+
+    const pageNumber = Number(params.page)
+    if (Number.isNaN(pageNumber)) return redirect(302, '/')
+    const category = store.getters.categories.find(
       (_category) => _category.slug === params.slug
     )
-    const { articles, total } = await getArticles($config, {
+    await store.dispatch('fetchArticles', {
+      ...$config,
       category: (category && category._id) || '',
-      page: currentPage,
+      page: pageNumber,
     })
-    const app = await getApp($config)
 
     return {
-      articles,
-      total,
       category,
-      categories,
-      currentPage,
-      app,
+      pageNumber,
     }
   },
   head() {
     return {
       title: getSiteName(this.app),
     }
+  },
+  computed: {
+    ...mapGetters(['app', 'articles', 'total', 'categories']),
   },
 }
 </script>
