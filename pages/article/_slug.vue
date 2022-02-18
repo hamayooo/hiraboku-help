@@ -1,42 +1,39 @@
 <template>
-  <Wrapper :app="app" :use-h1="false">
-    <main class="Container">
-      <article v-if="currentArticle" class="Article">
-        <div class="Article_Header">
-          <ul class="Breadcrumb">
-            <li class="Breadcrumb_Item">
-              <nuxt-link to="/" class="Breadcrumb_Link">Home</nuxt-link>
-            </li>
-            <li v-if="currentArticle.category" class="Breadcrumb_Item">
-              <nuxt-link
-                :to="`/category/${currentArticle.category.slug}`"
-                class="Breadcrumb_Link"
-                >{{ currentArticle.category.name }}</nuxt-link
-              >
-            </li>
-          </ul>
-          <h1 class="Article_Title">{{ currentArticle.title }}</h1>
-        </div>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="Article_Body" v-html="currentArticle.body"></div>
-        <!-- <Like /> -->
-        <section v-if="articles.length > 0" class="Related">
-          <h2 class="Related_Heading">Related articles</h2>
-          <ul class="Related_List">
-            <li
-              v-for="article in articles"
-              :key="article._id"
-              class="Related_Item"
+  <main class="Container">
+    <article v-if="currentArticle" class="Article">
+      <div class="Article_Header">
+        <ul class="Breadcrumb">
+          <li class="Breadcrumb_Item">
+            <nuxt-link to="/" class="Breadcrumb_Link">Home</nuxt-link>
+          </li>
+          <li v-if="currentArticle.category" class="Breadcrumb_Item">
+            <nuxt-link
+              :to="`/category/${currentArticle.category.slug}`"
+              class="Breadcrumb_Link"
+              >{{ currentArticle.category.name }}</nuxt-link
             >
-              <NuxtLink :to="`/article/${article.slug}`">{{
-                article.title
-              }}</NuxtLink>
-            </li>
-          </ul>
-        </section>
-      </article>
-    </main>
-  </Wrapper>
+          </li>
+        </ul>
+        <h1 class="Article_Title">{{ currentArticle.title }}</h1>
+      </div>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div class="Article_Body" v-html="currentArticle.body"></div>
+      <section v-if="articles.length > 0" class="Related">
+        <h2 class="Related_Heading">Related articles</h2>
+        <ul class="Related_List">
+          <li
+            v-for="article in articles"
+            :key="article._id"
+            class="Related_Item"
+          >
+            <NuxtLink :to="`/article/${article.slug}`">{{
+              article.title
+            }}</NuxtLink>
+          </li>
+        </ul>
+      </section>
+    </article>
+  </main>
 </template>
 
 <script>

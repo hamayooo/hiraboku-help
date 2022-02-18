@@ -1,36 +1,30 @@
 <template>
-  <Wrapper :app="app">
-    <main class="Container">
-      <div class="Inner">
-        <div class="Category_Header">
-          <em v-if="category.emoji && category.emoji.value">{{
-            category.emoji.value
-          }}</em>
-          <div class="Category_Text">
-            <h2>{{ category.name }}</h2>
-            <p>{{ category.description }}</p>
-          </div>
-        </div>
-        <div class="Articles">
-          <article
-            v-for="article in articles"
-            :key="article._id"
-            class="Article"
-          >
-            <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
-              <h3 class="Article_Title">{{ article.title }}</h3>
-              <p class="Article_Description">{{ article.description }}</p>
-            </NuxtLink>
-          </article>
-          <Pagination
-            :total="total"
-            :current="1"
-            :base-path="`/category/${category.slug}`"
-          />
+  <main class="Container">
+    <div class="Inner">
+      <div class="Category_Header">
+        <em v-if="category.emoji && category.emoji.value">{{
+          category.emoji.value
+        }}</em>
+        <div class="Category_Text">
+          <h2>{{ category.name }}</h2>
+          <p>{{ category.description }}</p>
         </div>
       </div>
-    </main>
-  </Wrapper>
+      <div class="Articles">
+        <article v-for="article in articles" :key="article._id" class="Article">
+          <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
+            <h3 class="Article_Title">{{ article.title }}</h3>
+            <p class="Article_Description">{{ article.description }}</p>
+          </NuxtLink>
+        </article>
+        <Pagination
+          :total="total"
+          :current="1"
+          :base-path="`/category/${category.slug}`"
+        />
+      </div>
+    </div>
+  </main>
 </template>
 
 <script>
