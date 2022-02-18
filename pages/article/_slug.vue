@@ -1,35 +1,35 @@
 <template>
   <Wrapper :app="app" :use-h1="false">
     <main class="Container">
-      <article v-if="article" class="Article">
+      <article v-if="currentArticle" class="Article">
         <div class="Article_Header">
           <ul class="Breadcrumb">
             <li class="Breadcrumb_Item">
               <nuxt-link to="/" class="Breadcrumb_Link">Home</nuxt-link>
             </li>
-            <li v-if="category" class="Breadcrumb_Item">
+            <li v-if="currentArticle.category" class="Breadcrumb_Item">
               <nuxt-link
-                :to="`/category/${category.slug}`"
+                :to="`/category/${currentArticle.category.slug}`"
                 class="Breadcrumb_Link"
-                >{{ category.name }}</nuxt-link
+                >{{ currentArticle.category.name }}</nuxt-link
               >
             </li>
           </ul>
-          <h1 class="Article_Title">{{ article.title }}</h1>
+          <h1 class="Article_Title">{{ currentArticle.title }}</h1>
         </div>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="Article_Body" v-html="article.body"></div>
+        <div class="Article_Body" v-html="currentArticle.body"></div>
         <!-- <Like /> -->
-        <section v-if="relatedArticles.length > 0" class="Related">
+        <section v-if="articles.length > 0" class="Related">
           <h2 class="Related_Heading">Related articles</h2>
           <ul class="Related_List">
             <li
-              v-for="relatedArticle in relatedArticles"
-              :key="relatedArticle._id"
+              v-for="article in articles"
+              :key="article._id"
               class="Related_Item"
             >
-              <NuxtLink :to="`/article/${relatedArticle.slug}`">{{
-                relatedArticle.title
+              <NuxtLink :to="`/article/${article.slug}`">{{
+                article.title
               }}</NuxtLink>
             </li>
           </ul>
@@ -40,36 +40,40 @@
 </template>
 
 <script>
-import { getArticleBySlug, getArticles } from 'api/article'
+import { mapGetters } from 'vuex'
 import { formatDate } from 'utils/date'
-import { getApp } from 'api/app'
+import { getSiteName } from '../../utils/head'
 
 export default {
-  async asyncData({ $config, params }) {
-    const article = await getArticleBySlug($config, params.slug)
-    const { articles } = await getArticles($config, {
+  async asyncData({ $config, store, params, redirect }) {
+    await store.dispatch('fetchApp', $config)
+    await store.dispatch('fetchCurrentArticle', {
+      ...$config,
+      slug: params.slug,
+    })
+    const currentArticle = store.getters.currentArticle
+    if (!currentArticle) return redirect(302, '/')
+    await store.dispatch('fetchArticles', {
+      ...$config,
       query: {
-        tags: article.tags,
+        tags: currentArticle.tags,
         slug: {
-          ne: article.slug,
+          ne: currentArticle.slug,
         },
         select: ['slug', 'title'],
       },
     })
-    const app = await getApp($config)
-    return {
-      article,
-      category: article.category,
-      relatedArticles: articles,
-      app,
-    }
+    return {}
   },
   head() {
     return {
-      title: this.article.title,
+      title:
+        (this.currentArticle && this.currentArticle.title) ||
+        getSiteName(this.app),
     }
   },
   computed: {
+    ...mapGetters(['app', 'currentArticle', 'articles']),
     publishDate() {
       return this.article._sys.createdAt
         ? formatDate(this.article._sys.createdAt)

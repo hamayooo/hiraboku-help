@@ -24,7 +24,7 @@
           </article>
           <Pagination
             :total="total"
-            :current="currentPage"
+            :current="pageNumber"
             :base-path="`/category/${category.slug}`"
           />
         </div>
@@ -34,38 +34,37 @@
 </template>
 
 <script>
-import { getArticles } from 'api/article'
-import { getCategories } from 'api/category'
-import { getApp } from 'api/app'
+import { mapGetters } from 'vuex'
 import { getSiteName } from 'utils/head'
 
 export default {
-  async asyncData({ $config, redirect, params }) {
-    const currentPage = Number(params.page)
-    if (Number.isNaN(currentPage)) return redirect(302, '/')
-    const { categories } = await getCategories($config)
-    const category = categories.find(
+  async asyncData({ $config, store, redirect, params }) {
+    await store.dispatch('fetchApp', $config)
+    await store.dispatch('fetchCategories', $config)
+
+    const pageNumber = Number(params.page)
+    if (Number.isNaN(pageNumber)) return redirect(302, '/')
+    const category = store.getters.categories.find(
       (_category) => _category.slug === params.slug
     )
-    const { articles, total } = await getArticles($config, {
+    await store.dispatch('fetchArticles', {
+      ...$config,
       category: (category && category._id) || '',
-      page: currentPage,
+      page: pageNumber,
     })
-    const app = await getApp($config)
 
     return {
-      articles,
-      total,
       category,
-      categories,
-      currentPage,
-      app,
+      pageNumber,
     }
   },
   head() {
     return {
       title: getSiteName(this.app),
     }
+  },
+  computed: {
+    ...mapGetters(['app', 'articles', 'total', 'categories']),
   },
 }
 </script>
