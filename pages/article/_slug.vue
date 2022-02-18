@@ -39,7 +39,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { formatDate } from 'utils/date'
-import { getSiteName } from '../../utils/head'
+import { toPlainText } from '../../utils/markdown'
 
 export default {
   async asyncData({ $config, store, params, redirect }) {
@@ -64,31 +64,60 @@ export default {
   },
   head() {
     return {
-      title:
-        (this.currentArticle && this.currentArticle.title) ||
-        getSiteName(this.app),
+      title: this.title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.description,
+        },
+        {
+          hid: 'og:image',
+          name: 'og:image',
+          content: this.ogImage,
+        },
+      ],
     }
   },
   computed: {
     ...mapGetters(['app', 'currentArticle', 'articles']),
+    meta() {
+      if (this.currentArticle && this.currentArticle.meta) {
+        return this.currentArticle.meta
+      }
+      return null
+    },
+    title() {
+      if (this.meta && this.meta.title) {
+        return this.meta.title
+      }
+      if (this.currentArticle && this.currentArticle.title) {
+        return this.currentArticle.title
+      }
+      return this.app && (this.app.name || this.app.uid || 'Help center')
+    },
+    description() {
+      if (this.meta && this.meta.description) {
+        return this.meta.description
+      }
+      if (this.currentArticle && this.currentArticle.body) {
+        return toPlainText(this.currentArticle.body).slice(0, 200)
+      }
+      return ''
+    },
+    ogImage() {
+      if (this.meta && this.meta.ogImage) {
+        return this.meta.ogImage.src
+      }
+      return ''
+    },
     publishDate() {
-      return this.article._sys.createdAt
-        ? formatDate(this.article._sys.createdAt)
+      return this.currentArticle && this.currentArticle._sys.createdAt
+        ? formatDate(this.currentArticle._sys.createdAt)
         : ''
     },
     publishDateForAttr() {
       return this.publishDate.replace(/\//g, '-')
-    },
-    authorName() {
-      return (this.article.author && this.article.author.fullName) || 'NO NAME'
-    },
-    authorSelfIntroduction() {
-      return (
-        (this.article.author &&
-          this.article.author.introduction &&
-          this.article.author.introduction.html) ||
-        ''
-      )
     },
   },
 }
