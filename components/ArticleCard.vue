@@ -1,39 +1,32 @@
 <template>
   <article class="Article">
     <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
-      <h3 class="Article_Title">{{article.title}}</h3>
-      <p class="Article_Description">{{article.description}}</p>
+      <h3 class="Article_Title">{{ article.title }}</h3>
+      <p class="Article_Description">{{ article.description }}</p>
     </NuxtLink>
   </article>
 </template>
 
 <script>
-import { formatDate } from 'utils/date'
-
 export default {
   props: {
     article: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
     authorName() {
       return (this.article.author && this.article.author.fullName) || 'NO NAME'
-    }
+    },
   },
-  methods: {
-    formatDate(dateStr) {
-      return dateStr ? formatDate(dateStr) : ''
-    }
-  }
 }
 </script>
 
 <style scoped>
 .Article {
   border: 1px solid #e5e5e5;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,.05);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   margin: 0 0 16px 0;
   display: flex;
@@ -46,7 +39,7 @@ export default {
   color: #333;
   text-decoration: none;
   border-radius: 4px;
-  transition: background .2s;
+  transition: background 0.2s;
   background: #fff;
 }
 .Article_Link:hover {

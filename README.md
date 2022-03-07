@@ -87,9 +87,8 @@ $ yarn start
 
 | App名（任意） | モデル名（モデルUID） |
 | --- | --- |
-| Blog | Article (`article`) |
+| Help center | Article (`article`) |
 |  | Category (`category`) |
-|  | Author (`author`) |
 
 ### Article（`uid: article`）モデル
 
