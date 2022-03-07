@@ -14,7 +14,7 @@
         <article v-for="article in articles" :key="article._id" class="Article">
           <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
             <h3 class="Article_Title">{{ article.title }}</h3>
-            <p class="Article_Description">{{ article.description }}</p>
+            <p class="Article_Description">{{ htmlToText(article.body) }}</p>
           </NuxtLink>
         </article>
         <Pagination
@@ -30,6 +30,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getSiteName } from 'utils/head'
+import { htmlToText } from 'html-to-text'
 
 export default {
   async asyncData({ $config, store, redirect, params }) {
@@ -59,6 +60,18 @@ export default {
   },
   computed: {
     ...mapGetters(['app', 'articles', 'total', 'categories']),
+  },
+  methods: {
+    htmlToText(html) {
+      return htmlToText(html, {
+        selectors: [
+          {
+            selector: 'img',
+            format: 'skip',
+          },
+        ],
+      })
+    },
   },
 }
 </script>

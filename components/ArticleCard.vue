@@ -2,12 +2,13 @@
   <article class="Article">
     <NuxtLink :to="`/article/${article.slug}`" class="Article_Link">
       <h3 class="Article_Title">{{ article.title }}</h3>
-      <p class="Article_Description">{{ article.description }}</p>
+      <p class="Article_Description">{{ htmlToText(article.body) }}</p>
     </NuxtLink>
   </article>
 </template>
 
 <script>
+import { htmlToText } from 'html-to-text'
 export default {
   props: {
     article: {
@@ -15,9 +16,16 @@ export default {
       default: null,
     },
   },
-  computed: {
-    authorName() {
-      return (this.article.author && this.article.author.fullName) || 'NO NAME'
+  methods: {
+    htmlToText(html) {
+      return htmlToText(html, {
+        selectors: [
+          {
+            selector: 'img',
+            format: 'skip',
+          },
+        ],
+      })
     },
   },
 }
