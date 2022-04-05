@@ -53,7 +53,7 @@ export default {
     await store.dispatch('fetchArticles', {
       ...$config,
       query: {
-        tags: currentArticle.tags,
+        tags: { in: currentArticle.tags },
         slug: {
           ne: currentArticle.slug,
         },
@@ -74,7 +74,7 @@ export default {
         {
           hid: 'og:type',
           property: 'og:type',
-          content: 'article'
+          content: 'article',
         },
         {
           hid: 'og:title',
@@ -93,7 +93,7 @@ export default {
         },
         {
           name: 'twitter:card',
-          content: 'summary_large_image'
+          content: 'summary_large_image',
         },
       ],
     }
