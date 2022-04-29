@@ -7,7 +7,7 @@
 <h3 align="center">
 Newt's starter
 </h3>
-<p align="center">
+<p align="center">f
   <a href="https://demo-newt-help-center-starter-nuxtjs.vercel.app/">Demo</a> | <a href="https://www.newt.so/">Newt</a>
 </p>
 
